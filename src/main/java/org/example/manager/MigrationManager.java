@@ -9,6 +9,7 @@ import java.sql.Connection;
 public class MigrationManager {
     private final MigrationTableManager tableManager;
     private final MigrationTrackerManager trackerManager;
+    private final MigrationLockManager lockManager;
 
     public void createTablesIfNotExist(Connection connection) {
         tableManager.createTablesIfNotExist(connection);
@@ -20,5 +21,13 @@ public class MigrationManager {
 
     public boolean isMigrationApplied(Connection connection, String migrationName) {
         return trackerManager.isMigrationApplied(connection, migrationName);
+    }
+
+    public boolean aquireLock(Connection connection) {
+        return lockManager.acquireLock(connection);
+    }
+
+    public void releaseLock(Connection connection){
+        lockManager.releaseLock(connection);
     }
 }

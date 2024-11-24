@@ -17,21 +17,25 @@ public class MigrationService {
     public void runMigrations(Connection connection, List<MigrationFile> migrations) {
         try {
             manager.createTablesIfNotExist(connection);
+            if(!manager.aquireLock(connection)) {
+                MigrationLogger.logInfo("Migrations are already being performed in another process");
+                return;
+            }
             connection.setAutoCommit(false);
 
             for (MigrationFile file : migrations) {
                 processMigration(connection, file);
             }
-
             connection.commit();
         } catch (Exception ex) {
             try {
                 connection.rollback();
                 MigrationLogger.logError("Transaction rolled back due to migration failure", ex);
-            } catch (SQLException rlbk) {
-                MigrationLogger.logError("Error during rollback after failure", rlbk);
+            } catch (SQLException e) {
+                MigrationLogger.logError("Error during rollback after failure", e);
             }
         } finally {
+            manager.releaseLock(connection);
             resetAutoCommit(connection);
         }
     }
