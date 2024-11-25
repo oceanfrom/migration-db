@@ -3,7 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.executor.MigrationExecutor;
 import org.example.manager.MigrationManager;
-import org.example.reader.MigrationFile;
+import org.example.model.MigrationFile;
 import org.example.logger.MigrationLogger;
 import org.example.report.MigrationReport;
 import java.io.IOException;

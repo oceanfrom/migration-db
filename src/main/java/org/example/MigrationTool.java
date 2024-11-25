@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.dependency.DependencyFactory;
 import org.example.logger.MigrationLogger;
-import org.example.reader.MigrationFile;
+import org.example.model.MigrationFile;
 import org.example.reader.MigrationFileReader;
 import org.example.utils.ConnectionUtils;
 import java.sql.Connection;

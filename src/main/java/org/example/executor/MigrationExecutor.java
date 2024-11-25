@@ -1,7 +1,7 @@
 package org.example.executor;
 
 import org.example.logger.MigrationLogger;
-import org.example.reader.MigrationFile;
+import org.example.model.MigrationFile;
 
 
 import java.sql.Connection;

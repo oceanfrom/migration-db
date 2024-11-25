@@ -1,5 +1,7 @@
 package org.example.reader;
 
+import org.example.model.MigrationFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

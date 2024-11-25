@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.executor.MigrationExecutor;
 import org.example.logger.MigrationLogger;
 import org.example.manager.MigrationManager;
-import org.example.reader.MigrationFile;
+import org.example.model.MigrationFile;
 import org.example.reader.MigrationFileReader;
 import java.io.File;
 import java.sql.Connection;

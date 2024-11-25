@@ -1,7 +1,6 @@
 package org.example.manager;
 
 import lombok.RequiredArgsConstructor;
-import org.example.reader.MigrationFile;
 
 import java.sql.Connection;
 
