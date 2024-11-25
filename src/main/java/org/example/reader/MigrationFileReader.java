@@ -1,7 +1,7 @@
 package org.example.reader;
 
+import org.example.constants.ResourceConstants;
 import org.example.model.MigrationFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,11 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MigrationFileReader {
-    private static final String MIGRATIONS_DIRECTORY = "src/main/resources/db.changelog/versions";
 
     public List<MigrationFile> getMigrationFiles() {
 
-        File dir = new File(MIGRATIONS_DIRECTORY);
+        File dir = new File(ResourceConstants.MIGRATIONS_DIRECTORY);
 
         if (dir.exists() && dir.isDirectory()) {
             return Arrays.stream(dir.listFiles())

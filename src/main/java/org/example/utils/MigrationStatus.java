@@ -1,6 +1,7 @@
 package org.example.utils;
 
 import lombok.RequiredArgsConstructor;
+import org.example.constants.MigrationStatusConstants;
 import org.example.logger.MigrationLogger;
 import org.example.manager.MigrationManager;
 import java.sql.Connection;
@@ -11,7 +12,6 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class MigrationStatus {
     private final MigrationManager manager;
-    private String query = "SELECT migration_name, rollbacked_on FROM applied_migrations ORDER BY applied_at ASC";
 
     public void info(Connection connection) {
         String lastMigration = null;
@@ -21,7 +21,7 @@ public class MigrationStatus {
                 }
 
         try {
-             PreparedStatement statement = connection.prepareStatement(query);
+             PreparedStatement statement = connection.prepareStatement(MigrationStatusConstants.GET_MIGRATION_STATUS_QUERY);
              ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {

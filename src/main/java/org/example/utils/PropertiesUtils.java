@@ -1,16 +1,16 @@
 package org.example.utils;
 
+import org.example.constants.ResourceConstants;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 public class PropertiesUtils {
 
-    private static final String DB_CONFIG_PATH = "src/main/resources/application.properties";
-
     public static Properties loadProperties() {
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(DB_CONFIG_PATH)) {
+        try (FileInputStream fis = new FileInputStream(ResourceConstants.DB_CONFIG_PATH)) {
             properties.load(fis);
         } catch (IOException e) {
             throw new RuntimeException("Error loading configuration", e);

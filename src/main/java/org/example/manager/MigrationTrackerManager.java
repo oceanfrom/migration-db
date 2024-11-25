@@ -1,20 +1,16 @@
 package org.example.manager;
 
+import org.example.constants.MigrationTrackerConstants;
 import org.example.logger.MigrationLogger;
-
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MigrationTrackerManager {
+
     public void markMigrationAsApplied(Connection connection, String migrationName, boolean success, String message) {
-        String query =
-                "INSERT INTO applied_migrations (migration_name, status, applied_at) " +
-                        "VALUES (?, ?, CURRENT_TIMESTAMP) " +
-                        "ON CONFLICT (migration_name) DO UPDATE SET " +
-                        "status = EXCLUDED.status, applied_at = CASE WHEN EXCLUDED.status = 'APPLIED' THEN CURRENT_TIMESTAMP ELSE NULL END;";
+        String query = MigrationTrackerConstants.INSERT_OR_UPDATE_MIGRATION_QUERY;
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, migrationName);
             preparedStatement.setString(2, success ? "APPLIED" : "FAILED");
@@ -25,9 +21,7 @@ public class MigrationTrackerManager {
     }
 
     public boolean isMigrationApplied(Connection connection, String migrationName) {
-        String checkQuery =
-                "SELECT COUNT(*) FROM applied_migrations " +
-                        "WHERE migration_name = ? AND status = 'APPLIED'";
+        String checkQuery = MigrationTrackerConstants.CHECK_MIGRATION_APPLIED_QUERY;
         try (PreparedStatement preparedStatement = connection.prepareStatement(checkQuery)) {
             preparedStatement.setString(1, migrationName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -40,9 +34,8 @@ public class MigrationTrackerManager {
     }
 
     public void markMigrationAsRolledBack(Connection connection, String migrationName) {
-        String updateQuery = "UPDATE applied_migrations SET rollbacked_on = CURRENT_TIMESTAMP WHERE migration_name = ?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+        String updateQuery = MigrationTrackerConstants.UPDATE_ROLLEDBACK_QUERY;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setString(1, migrationName.trim());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -51,11 +44,8 @@ public class MigrationTrackerManager {
     }
 
     public boolean isMigrationRolledBack(Connection connection, String migrationName) {
-        String checkQuery =
-                "SELECT COUNT(*) FROM applied_migrations " +
-                        "WHERE migration_name = ? AND rollbacked_on IS NOT NULL";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(checkQuery);
+        String checkQuery = MigrationTrackerConstants.CHECK_MIGRATION_ROLLEDBACK_QUERY;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(checkQuery)) {
             preparedStatement.setString(1, migrationName.trim());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();

@@ -1,9 +1,9 @@
 package org.example.manager;
 
 import lombok.RequiredArgsConstructor;
+import org.example.constants.ResourceConstants;
 import org.example.logger.MigrationLogger;
 import org.example.reader.MigrationFileReader;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ public class MigrationTableManager {
 
     public  void createTablesIfNotExist(Connection connection) {
         try {
-            String createTablesQuery = reader.readSqlFile("src/main/resources/sql/create_tables.sql");
+            String createTablesQuery = reader.readSqlFile(ResourceConstants.DB_CREATE_TABLES_PATH);
 
             try(Statement statement = connection.createStatement();) {
 

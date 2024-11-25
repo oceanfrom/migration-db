@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.constants.ResourceConstants;
 import org.example.executor.MigrationExecutor;
 import org.example.logger.MigrationLogger;
 import org.example.manager.MigrationManager;
@@ -17,8 +18,6 @@ import java.util.List;
 public class MigrationRollbackService {
     private final MigrationManager manager;
     private final MigrationFileReader fileReader;
-    private static final String ROLLBACK_DIR = "src/main/resources/db.changelog/rollback/";
-
     public void executeRollback(Connection connection, List<MigrationFile> files) {
         try {
             if (!manager.aquireLock(connection)) {
@@ -56,7 +55,7 @@ public class MigrationRollbackService {
     }
 
     private MigrationFile findRollbackMigrationFile(String rollbackFileName) {
-        File rollbackFile = new File(ROLLBACK_DIR + rollbackFileName);
+        File rollbackFile = new File(ResourceConstants.ROLLBACK_DIR + rollbackFileName);
         if (rollbackFile.exists()) {
             String content = fileReader.readFileContent(String.valueOf(rollbackFile));
             return new MigrationFile(rollbackFileName, rollbackFile.getAbsolutePath(), content);
@@ -86,6 +85,7 @@ public class MigrationRollbackService {
         for (int i = 0; i < allMigrations.size(); i++) {
             if (manager.isMigrationRolledBack(connection, allMigrations.get(i).getFileName())) {
                 lastRolledBackIndex = i - 1;
+                System.out.println(allMigrations.get(i-1).getFileName());
                 break;
             }
         }
