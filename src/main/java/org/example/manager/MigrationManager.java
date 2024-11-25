@@ -30,4 +30,12 @@ public class MigrationManager {
     public void releaseLock(Connection connection){
         lockManager.releaseLock(connection);
     }
+
+    public void markMigrationAsRolledBack(Connection connection, String migrationName) {
+        trackerManager.markMigrationAsRolledBack(connection, migrationName);
+    }
+
+    public boolean isMigrationRolledBack(Connection connection, String migrationName) {
+        return trackerManager.isMigrationRolledBack(connection, migrationName);
+    }
 }
