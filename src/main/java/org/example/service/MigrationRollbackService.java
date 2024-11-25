@@ -43,7 +43,6 @@ public class MigrationRollbackService {
     public void processRollback(Connection connection, MigrationFile migrationFile) {
         if (manager.isMigrationRolledBack(connection, migrationFile.getFileName())) {
             MigrationLogger.logInfo("Migration " + migrationFile.getFileName() + " has already been rolled back, skipping...");
-            return;
         }
         String rollbackFileName = migrationFile.getFileName().replaceFirst("([^/]+)(\\.sql)$", "$1-rollback$2");
         MigrationFile rollbackMigrationFile = findRollbackMigrationFile(rollbackFileName);

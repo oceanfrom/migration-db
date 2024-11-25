@@ -9,6 +9,4 @@ public class MigrationResult {
     private final String migrationName;
     private final boolean success;
     private final String message;
-
-
 }
