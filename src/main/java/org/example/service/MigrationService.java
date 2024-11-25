@@ -5,7 +5,8 @@ import org.example.executor.MigrationExecutor;
 import org.example.manager.MigrationManager;
 import org.example.reader.MigrationFile;
 import org.example.logger.MigrationLogger;
-
+import org.example.report.MigrationReport;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MigrationService {
     private final MigrationManager manager;
+    private final MigrationReport report;
+
 
     public void runMigrations(Connection connection, List<MigrationFile> migrations) {
         try {
@@ -28,14 +31,10 @@ public class MigrationService {
             }
             connection.commit();
         } catch (Exception ex) {
-            try {
-                connection.rollback();
-                MigrationLogger.logError("Transaction rolled back due to migration failure", ex);
-            } catch (SQLException e) {
-                MigrationLogger.logError("Error during rollback after failure", e);
-            }
+           handleRollbackError(connection, ex);
         } finally {
             manager.releaseLock(connection);
+            generateReport();
             resetAutoCommit(connection);
         }
     }
@@ -46,12 +45,30 @@ public class MigrationService {
             if (manager.isMigrationApplied(connection, migrationName)) {
                 MigrationLogger.logInfo("Migration already applied: " + migrationName);
             } else {
-                MigrationLogger.logInfo("Applying migration: " + migrationName);
                 MigrationExecutor.executeMigration(connection, file);
+                report.addMigrationResult(migrationName, true, "Applied successfully");
                 manager.markMigrationAsApplied(connection, migrationName, true, "Applied successfully");
             }
         } catch (Exception ex) {
-            MigrationLogger.logError("Error during migration execution: " + migrationName, ex);
+            report.addMigrationResult(migrationName, false, "Not applied: " + migrationName);
+
+        }
+    }
+
+    private void handleRollbackError(Connection connection, Exception ex) {
+        MigrationLogger.logError("Error occurred during rollback process", ex);
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            MigrationLogger.logError("Failed to rollback transaction after migration failure", e);
+        }
+    }
+
+    private void generateReport() {
+        try {
+            report.generateJSONReport("migration_report.json");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
