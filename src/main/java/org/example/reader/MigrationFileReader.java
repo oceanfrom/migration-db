@@ -36,7 +36,7 @@ public class MigrationFileReader {
         return Collections.emptyList();
     }
 
-    private String readFileContent(String filePath) {
+    public String readFileContent(String filePath) {
         try {
             return new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
