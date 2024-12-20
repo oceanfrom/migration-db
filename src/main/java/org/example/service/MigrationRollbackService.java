@@ -85,7 +85,6 @@ public class MigrationRollbackService {
         for (int i = 0; i < allMigrations.size(); i++) {
             if (manager.isMigrationRolledBack(connection, allMigrations.get(i).getFileName())) {
                 lastRolledBackIndex = i - 1;
-                System.out.println(allMigrations.get(i-1).getFileName());
                 break;
             }
         }

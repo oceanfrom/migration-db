@@ -7,15 +7,16 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            Connection connection = ConnectionUtils.getConnection();
-            MigrationTool tool = new MigrationTool(connection);
-            //    tool.runMigrations();
-            // tool.rollbackMigrationToVersion("0002-insert.sql");
-            tool.rollbackLastMigrationCount(1);
-            tool.getStatus();
+        try (Connection connection = ConnectionUtils.getDataSource().getConnection()) {
+            MigrationTool tool = new MigrationTool();
+            //tool.runMigrations(connection);
+            tool.rollbackMigrationToVersion(connection, "0002-insert.sql");
+            //tool.rollbackLastMigrationCount(connection, 4);
+            tool.getStatus(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            ConnectionUtils.closePool();
         }
     }
 }

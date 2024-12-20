@@ -1,20 +1,33 @@
 package org.example.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import javax.sql.DataSource;
 
 public class ConnectionUtils {
+    private static final HikariDataSource dataSource;
 
-    public static Connection getConnection() throws SQLException {
-        String url = PropertiesUtils.getDbUrl();
-        String user = PropertiesUtils.getDbUser();
-        String password = PropertiesUtils.getDbPassword();
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(PropertiesUtils.getDbUrl());
+        config.setUsername(PropertiesUtils.getDbUser());
+        config.setPassword(PropertiesUtils.getDbPassword());
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(2);
+        config.setIdleTimeout(30000);
+        config.setConnectionTimeout(30000);
+        config.setMaxLifetime(1800000);
+        dataSource = new HikariDataSource(config);
+    }
 
-        try {
-            return DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            throw new SQLException("Failed to connect to the database", e);
+    public static DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public static void closePool() {
+        if (dataSource != null) {
+            dataSource.close();
         }
     }
 }

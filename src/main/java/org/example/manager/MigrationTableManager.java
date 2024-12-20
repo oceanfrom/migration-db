@@ -17,8 +17,7 @@ public class MigrationTableManager {
         try {
             String createTablesQuery = reader.readSqlFile(ResourceConstants.DB_CREATE_TABLES_PATH);
 
-            try(Statement statement = connection.createStatement();) {
-
+            try(Statement statement = connection.createStatement()) {
                 connection.setAutoCommit(false);
                 statement.execute(createTablesQuery);
                 connection.commit();
